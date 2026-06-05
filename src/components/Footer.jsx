@@ -62,7 +62,7 @@ export default function Footer({ profileData }) {
             </>
           ) : (
             <>
-              © {year} <span className="gradient-text" style={{ fontWeight: 600 }}>Portfolio Hub</span> — BizDimension Team Registry.
+              © {year} <span className="gradient-text" style={{ fontWeight: 600 }}>Portfolio Hub</span> — Mony Team Registry.
             </>
           )}
         </p>

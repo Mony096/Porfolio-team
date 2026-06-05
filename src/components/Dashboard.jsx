@@ -5,7 +5,11 @@ export default function Dashboard({ onSelectProfile, theme }) {
   const [headerRef, headerVis] = useInView({ threshold: 0.1 });
   const [gridRef, gridVis] = useInView({ threshold: 0.1 });
 
-  const profiles = Object.values(profilesData);
+  const profiles = [
+    profilesData.mony,
+    profilesData.nida,
+    profilesData.kimchan
+  ];
 
   // Helper to get secondary accent color or gradient based on profile id
   const getProfileTheme = (id) => {
@@ -81,7 +85,7 @@ export default function Dashboard({ onSelectProfile, theme }) {
         {/* Header Block */}
         <div className="section-header" ref={headerRef} style={{ marginBottom: '4rem' }}>
           <p className={`section-subtitle reveal ${headerVis ? 'visible' : ''}`} style={{ fontSize: '0.9rem', letterSpacing: '0.2em' }}>
-            Team Portfolio Registry
+            Mony Team Registry
           </p>
           <h1 className={`reveal ${headerVis ? 'visible' : ''} stagger-1`} style={{ 
             fontSize: 'clamp(2.5rem, 5vw, 4rem)',

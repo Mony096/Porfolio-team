@@ -236,44 +236,44 @@ export const profilesData = {
     },
     experiences: [
       {
-        date: '2024 – Present',
-        role: 'Junior Instructor (Web & Office)',
-        company: 'Polytechnic Training Center',
+        date: '2025 – Present',
+        role: 'Intern',
+        company: 'Paññāsāstra International School',
         highlights: [
           {
-            text: 'Taught foundational HTML and CSS syntax, introducing beginner students to responsive flex layouts and media queries.',
+            text: 'Assisted instructors in managing IT classroom activities, tracking student progress, and setting up lab coursework materials.',
+            tags: ['Classroom Support']
+          },
+          {
+            text: 'Configured local classroom desktop environments, projector displays, and lab software setups for daily student operations.',
+            tags: ['IT Lab Ops']
+          },
+          {
+            text: 'Helped prepare foundational templates and exercise materials for entry-level digital literacy classes.',
+            tags: ['Office Tools']
+          }
+        ],
+        tech: ['Classroom Ops', 'IT Support', 'Office Tools'],
+      },
+      {
+        date: '2023 – 2024',
+        role: 'Teacher',
+        company: 'CITO',
+        highlights: [
+          {
+            text: 'Instructed foundational HTML5 and CSS3 styling concepts, introducing beginner students to responsive flex layouts.',
             tags: ['HTML5 & CSS3']
           },
           {
-            text: 'Conducted comprehensive training sessions in Microsoft Word formatting, Excel calculation logic, and PowerPoint deck designs.',
+            text: 'Conducted comprehensive training sessions in Microsoft Word formatting, Excel calculation formulas, and PowerPoint slides.',
             tags: ['Office Tools']
           },
           {
-            text: 'Instructed beginner design classes on wireframing, design alignment, and prototyping animations inside Adobe XD.',
+            text: 'Guided beginner design classes on wireframing, component grid alignment, and screen layout configurations inside Adobe XD.',
             tags: ['Adobe XD']
           }
         ],
         tech: ['HTML5', 'CSS3', 'Excel', 'Adobe XD'],
-      },
-      {
-        date: '2022 – 2024',
-        role: 'Student Tutor & IT Lab Assistant',
-        company: 'National Polytechnic Techo Sen Institute',
-        highlights: [
-          {
-            text: 'Assisted senior professors in hosting laboratory classes, grading basic web pages, and guiding students on styling sheets.',
-            tags: ['HTML & CSS']
-          },
-          {
-            text: 'Hosted tutoring hours to explain Microsoft Excel pivot tables, formatting hierarchies, and arithmetic logic structures.',
-            tags: ['Excel Tutor']
-          },
-          {
-            text: 'Configured local classroom desktop computers, projector displays, and lab software installations for clean student operations.',
-            tags: ['IT Lab Ops']
-          }
-        ],
-        tech: ['HTML5', 'Excel', 'Lab Support', 'Classroom Ops'],
       }
     ],
     projects: [
@@ -381,7 +381,7 @@ export const profilesData = {
     },
     experiences: [
       {
-        date: '2022 – Present',
+        date: '2025 – Present',
         role: 'Sales Consultant & Office Controller',
         company: 'PharmaCare Depot / Medical Office',
         highlights: [
@@ -399,6 +399,26 @@ export const profilesData = {
           }
         ],
         tech: ['Prescription Sales', 'Apothecary Portal', 'Excel Ledgers', 'Supply Chain'],
+      },
+      {
+        date: '2023 – 2024',
+        role: 'Intern',
+        company: 'Paññāsāstra International School',
+        highlights: [
+          {
+            text: 'Assisted in administrative office operations, managing student enrollment databases, and preparing report sheets.',
+            tags: ['Administration']
+          },
+          {
+            text: 'Organized and maintained physical and digital school records using Microsoft Excel.',
+            tags: ['Excel Ledgers']
+          },
+          {
+            text: 'Supported general operations and coordinated front-desk parent/student inquiries.',
+            tags: ['Office Support']
+          }
+        ],
+        tech: ['Excel', 'Office Admin', 'Customer Service'],
       }
     ],
     projects: [

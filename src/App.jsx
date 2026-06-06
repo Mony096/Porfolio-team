@@ -14,6 +14,7 @@ import LoginGate from './components/LoginGate';
 
 function App() {
   const [profiles, setProfiles] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [authState, setAuthState] = useState(() => {
     let role = sessionStorage.getItem('auth_role');
     let passcode = sessionStorage.getItem('auth_passcode');
@@ -63,6 +64,8 @@ function App() {
       } catch (error) {
         console.log('Backend is offline. Using local static profiles data.');
         setProfiles([]);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProfiles();
@@ -195,6 +198,25 @@ function App() {
   };
 
   const progressPercentage = slides.length > 0 ? ((currentSlide + 1) / slides.length) * 100 : 0;
+
+  if (loading) {
+    return (
+      <div className="full-screen-loader">
+        <div className="loader-content">
+          <div className="loader-logo">
+            PORTFOLIO HUB
+            <span className="logo-dot"></span>
+          </div>
+          <div className="loader-spinner-container">
+            <div className="loader-spinner"></div>
+            <div className="loader-spinner-inner"></div>
+          </div>
+          <p className="loader-text">Syncing Workspace Registry...</p>
+          <p className="loader-subtext">Connecting to production API server. Initial spin-up on Render free hosting may take up to 30 seconds.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!authState) {
     return <LoginGate onLogin={handleLogin} />;

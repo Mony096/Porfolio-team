@@ -8,10 +8,62 @@ export default function Navbar({
   theme, 
   setTheme,
   activeProfile,
-  setActiveProfile
+  setActiveProfile,
+  viewAdmin,
+  setViewAdmin,
+  authState,
+  onLogout
 }) {
   const [isActive, setIsActive] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  
+  const [showEmployeeMessages, setShowEmployeeMessages] = useState(false);
+  const [employeeMessages, setEmployeeMessages] = useState([]);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+
+  const fetchEmployeeMessages = async () => {
+    if (!authState || authState.role !== 'employee') return;
+    setMessagesLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5005/api/messages/${authState.profileId}`, {
+        headers: { 'x-employee-passcode': authState.passcode }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setEmployeeMessages(data.reverse());
+      }
+    } catch (error) {
+      console.error('Failed to fetch employee messages:', error);
+    } finally {
+      setMessagesLoading(false);
+    }
+  };
+
+  const handleDeleteMessage = async (msgId) => {
+    if (!window.confirm('Are you sure you want to delete this message?')) return;
+    try {
+      const response = await fetch(`http://localhost:5005/api/messages/${msgId}`, {
+        method: 'DELETE',
+        headers: {
+          'x-employee-passcode': authState.passcode
+        }
+      });
+      if (response.ok) {
+        setEmployeeMessages(prev => prev.filter(m => m.id !== msgId));
+      } else {
+        const errData = await response.json();
+        alert(`Failed to delete message: ${errData.error}`);
+      }
+    } catch (error) {
+      alert('Failed to connect to backend server to delete message.');
+    }
+  };
+
+  useEffect(() => {
+    if (showEmployeeMessages) {
+      fetchEmployeeMessages();
+    }
+  }, [showEmployeeMessages]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,16 +106,21 @@ export default function Navbar({
           className="logo" 
           onClick={(e) => {
             closeMenu();
-            if (activeProfile) {
-              e.preventDefault();
-              setActiveProfile(null);
+            if (authState?.role === 'admin') {
+              if (activeProfile) {
+                e.preventDefault();
+                setActiveProfile(null);
+              }
+              if (viewAdmin) {
+                setViewAdmin(false);
+              }
             }
           }}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: authState?.role === 'admin' ? 'pointer' : 'default' }}
         >
           {activeProfile ? (
             <>
-              {activeProfile === 'mony' ? 'KUNMONY' : activeProfile === 'kimchan' ? 'KIMCHAN' : 'NIDA'}
+              {activeProfile.toUpperCase()}
             </>
           ) : (
             <>
@@ -121,28 +178,60 @@ export default function Navbar({
               </div>
 
               {/* Return to Hub Button */}
-              <button
-                onClick={() => setActiveProfile(null)}
-                className="btn btn-secondary"
-                style={{
-                  padding: '0.4rem 0.8rem',
-                  fontSize: '0.8rem',
-                  height: '38px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontWeight: '600',
-                  borderRadius: '50px',
-                  flexShrink: 0
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="19" y1="12" x2="5" y2="12"></line>
-                  <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                Return to Hub
-              </button>
+              {authState?.role === 'admin' && (
+                <button
+                  onClick={() => setActiveProfile(null)}
+                  className="btn btn-secondary"
+                  style={{
+                    padding: '0.4rem 0.8rem',
+                    fontSize: '0.8rem',
+                    height: '38px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    fontWeight: '600',
+                    borderRadius: '50px',
+                    flexShrink: 0
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                  Return to Hub
+                </button>
+              )}
             </>
+          )}
+
+          {!activeProfile && (
+            <button
+              onClick={() => setViewAdmin(!viewAdmin)}
+              className="theme-toggle-btn"
+              title={viewAdmin ? "Back to Portfolios" : "Open Admin Panel"}
+              style={{
+                padding: '0.4rem 0.8rem',
+                fontSize: '0.85rem',
+                height: '38px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontWeight: '600',
+                borderRadius: '50px',
+                flexShrink: 0,
+                border: viewAdmin ? '1px solid var(--primary)' : '1px solid var(--card-border)',
+                background: viewAdmin ? 'rgba(150, 100, 255, 0.1)' : 'transparent',
+                color: viewAdmin ? 'var(--primary)' : 'var(--text-primary)',
+                cursor: 'pointer',
+                width: 'auto'
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span>{viewAdmin ? "Hub" : "Admin"}</span>
+            </button>
           )}
 
           {/* Theme Toggle Button */}
@@ -185,6 +274,38 @@ export default function Navbar({
             )}
           </button>
 
+          {/* Employee Messages Button */}
+          {authState && authState.role === 'employee' && (
+            <button
+              onClick={() => setShowEmployeeMessages(true)}
+              className="theme-toggle-btn"
+              title="My Messages"
+              style={{
+                padding: '0.4rem 0.8rem',
+                fontSize: '0.85rem',
+                height: '38px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontWeight: '600',
+                borderRadius: '50px',
+                flexShrink: 0,
+                border: '1px solid var(--card-border)',
+                background: 'transparent',
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                width: 'auto'
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>Messages</span>
+            </button>
+          )}
+
+
+
           {activeProfile && (
             <button 
               className="nav-toggle" 
@@ -203,6 +324,110 @@ export default function Navbar({
           )}
         </div>
       </div>
+
+      {/* Employee Messages Modal */}
+      {showEmployeeMessages && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1.5rem'
+        }} onClick={() => setShowEmployeeMessages(false)}>
+          <div style={{
+            maxWidth: '650px',
+            width: '100%',
+            maxHeight: '80vh',
+            background: 'var(--bg-color)',
+            border: '1px solid var(--card-border)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '2rem',
+            overflowY: 'auto',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.5rem',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
+          }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--card-border)', paddingBottom: '1rem' }}>
+              <h3 style={{ margin: 0, color: 'var(--text-primary)' }}>
+                Received Messages ({employeeMessages.length})
+              </h3>
+              <button 
+                onClick={() => setShowEmployeeMessages(false)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', fontSize: '1.5rem', cursor: 'pointer' }}
+              >
+                &times;
+              </button>
+            </div>
+
+            {messagesLoading ? (
+              <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Loading inquiries...</div>
+            ) : employeeMessages.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>No messages received yet.</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {employeeMessages.map((msg) => (
+                  <div key={msg.id} style={{
+                    background: 'var(--card-bg)',
+                    border: '1px solid var(--card-border)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '1.25rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      <span>From: <strong>{msg.name}</strong> ({msg.email})</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <span>{new Date(msg.createdAt).toLocaleString()}</span>
+                        <button
+                          onClick={() => handleDeleteMessage(msg.id)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: '#ff4d4d',
+                            cursor: 'pointer',
+                            padding: '1px 6px',
+                            borderRadius: '3px',
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            border: '1px solid rgba(255, 77, 77, 0.2)',
+                            backgroundColor: 'rgba(255, 77, 77, 0.05)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.15rem'
+                          }}
+                          title="Delete Message"
+                        >
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                      Subject: {msg.subject}
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>
+                      {msg.message}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

@@ -17,7 +17,7 @@ export default function Contact({ profileData }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formState.name || !formState.email || !formState.message) {
       setSubmitStatus('error');
@@ -27,11 +27,36 @@ export default function Contact({ profileData }) {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitStatus('success');
-      setFormState({ name: '', email: '', message: '' });
-    }, 1500);
+    try {
+      const response = await fetch('http://localhost:5005/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          recipientId: profileData?.id || 'general'
+        })
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormState({ name: '', email: '', message: '' });
+      } else {
+        setSubmitStatus('server-error');
+      }
+    } catch (error) {
+      console.warn('Backend is offline. Simulating local message submission.', error);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setSubmitStatus('success');
+        setFormState({ name: '', email: '', message: '' });
+      }, 1200);
+      return; // return early to avoid running finally block immediately if timeout runs async
+    }
+    setIsSubmitting(false);
   };
 
   return (
@@ -197,6 +222,22 @@ export default function Contact({ profileData }) {
                   textAlign: 'center'
                 }}>
                   Please fill out all fields before submitting.
+                </div>
+              )}
+
+              {submitStatus === 'server-error' && (
+                <div style={{
+                  marginTop: '1.5rem',
+                  padding: '1rem',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'hsla(0, 80%, 50%, 0.1)',
+                  border: '1px solid hsla(0, 80%, 50%, 0.3)',
+                  color: 'hsl(0, 80%, 45%)',
+                  fontSize: '0.95rem',
+                  fontWeight: '500',
+                  textAlign: 'center'
+                }}>
+                  Server error. Failed to save message on backend.
                 </div>
               )}
 

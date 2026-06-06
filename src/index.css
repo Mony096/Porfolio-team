@@ -13,9 +13,9 @@
   --text-muted: hsl(240, 5%, 55%);
   
   --primary: hsl(263, 90%, 65%);
-  --primary-glow: hsla(263, 90%, 65%, 0.25);
+  --primary-glow: hsla(263, 90%, 65%, 0.38);
   --secondary: hsl(190, 95%, 50%);
-  --secondary-glow: hsla(190, 95%, 50%, 0.25);
+  --secondary-glow: hsla(190, 95%, 50%, 0.38);
   
   --gradient-text: linear-gradient(135deg, hsl(263, 90%, 65%) 0%, hsl(190, 95%, 50%) 100%);
   --gradient-card-hover: linear-gradient(135deg, hsla(263, 90%, 65%, 0.05) 0%, hsla(190, 95%, 50%, 0.05) 100%);
@@ -51,8 +51,8 @@
   --text-secondary: hsl(240, 10%, 40%);
   --text-muted: hsl(240, 5%, 60%);
   
-  --primary-glow: hsla(263, 90%, 65%, 0.16);
-  --secondary-glow: hsla(190, 95%, 50%, 0.16);
+  --primary-glow: hsla(263, 90%, 65%, 0.28);
+  --secondary-glow: hsla(190, 95%, 50%, 0.28);
   
   --gradient-card-hover: linear-gradient(135deg, hsla(263, 90%, 65%, 0.03) 0%, hsla(190, 95%, 50%, 0.03) 100%);
 
@@ -76,8 +76,8 @@
     --text-secondary: hsl(240, 10%, 40%);
     --text-muted: hsl(240, 5%, 60%);
     
-    --primary-glow: hsla(263, 90%, 65%, 0.16);
-    --secondary-glow: hsla(190, 95%, 50%, 0.16);
+    --primary-glow: hsla(263, 90%, 65%, 0.28);
+    --secondary-glow: hsla(190, 95%, 50%, 0.28);
     
     --gradient-card-hover: linear-gradient(135deg, hsla(263, 90%, 65%, 0.03) 0%, hsla(190, 95%, 50%, 0.03) 100%);
 
@@ -874,3 +874,106 @@ input:checked + .toggle-slider:before {
   background-color: rgba(255, 255, 255, 0.05) !important;
   box-shadow: 0 0 10px var(--primary-glow);
 }
+
+/* ==========================================
+   Modern Dashboard Background Animations
+   ========================================== */
+
+.dashboard-glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px); /* Sharper blur for more defined and visible shapes */
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.88; /* Significantly bolder visibility in dark mode */
+  mix-blend-mode: normal; /* Normal mode ensures high visibility without fading out */
+  transition: transform 0.5s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+:root.light-theme .dashboard-glow-orb {
+  opacity: 0.8; /* Higher visibility in light mode */
+  filter: blur(90px);
+}
+
+.dashboard-glow-orb-1 {
+  background: var(--primary-glow);
+  animation: blob-float-1 22s ease-in-out infinite alternate;
+}
+
+.dashboard-glow-orb-2 {
+  background: var(--secondary-glow);
+  animation: blob-float-2 28s ease-in-out infinite alternate-reverse;
+}
+
+.dashboard-glow-orb-3 {
+  background: hsla(263, 90%, 65%, 0.25);
+  animation: blob-float-3 20s ease-in-out infinite alternate;
+}
+
+@keyframes blob-float-1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(80px, -100px) scale(1.2);
+  }
+  66% {
+    transform: translate(-50px, 50px) scale(0.85);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes blob-float-2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-90px, 80px) scale(0.8);
+  }
+  66% {
+    transform: translate(100px, -60px) scale(1.25);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes blob-float-3 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(60px, 100px) scale(1.15);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.dashboard-tech-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(168, 85, 247, 0.08) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1.5px, transparent 1.5px);
+  background-size: 60px 60px;
+  background-position: center;
+  mask-image: radial-gradient(circle at center, black, transparent 85%);
+  -webkit-mask-image: radial-gradient(circle at center, black, transparent 85%);
+  opacity: 0.85; /* Bolder grid overlay */
+  z-index: -1;
+  pointer-events: none;
+}
+
+:root.light-theme .dashboard-tech-grid {
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.12) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.12) 1.5px, transparent 1.5px);
+  opacity: 0.75;
+}
+

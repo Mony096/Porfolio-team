@@ -6,10 +6,13 @@ export default function About({ profileData }) {
   const [bioRef, bioVis] = useInView({ threshold: 0.15 });
   const [skillsRef, skillsVis] = useInView({ threshold: 0.15 });
 
-  const skillsData = profileData.about.skillsConsole;
-  const secondarySkills = profileData.about.secondarySkills;
+  const skillsData = profileData.about?.skillsConsole || {};
+  const secondarySkills = profileData.about?.secondarySkills || [];
+  const activeSkillKeys = Object.keys(skillsData).filter(
+    key => skillsData[key] && skillsData[key].name && skillsData[key].description
+  );
 
-  const [activeTab, setActiveTab] = useState(() => Object.keys(skillsData)[0] || 'react');
+  const [activeTab, setActiveTab] = useState(() => activeSkillKeys[0] || '');
 
   return (
     <section id="about" className="section">
@@ -22,7 +25,7 @@ export default function About({ profileData }) {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 1.2fr)',
+          gridTemplateColumns: activeSkillKeys.length > 0 ? 'minmax(0, 1.1fr) minmax(0, 1.2fr)' : '1fr',
           gap: '3rem',
           alignItems: 'start'
         }} className="about-grid">
@@ -66,60 +69,61 @@ export default function About({ profileData }) {
             </div>
           </div>
 
-          {/* Interactive Core Stack Dashboard */}
-          <div ref={skillsRef} className={`reveal-right ${skillsVis ? 'visible' : ''} console-container`} style={{
-            backgroundColor: 'var(--card-bg)',
-            border: '1px solid var(--card-border)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.5rem',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--card-border)', paddingBottom: '1rem' }}>
-              <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', margin: 0 }}>
-                // CORE STACK CONSOLE
-              </h3>
-              {/* Decorative mini dots */}
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)' }}></span>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)' }}></span>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)' }}></span>
-              </div>
-            </div>
+            {/* Interactive Core Stack Dashboard */}
+            {activeSkillKeys.length > 0 && (
+              <div ref={skillsRef} className={`reveal-right ${skillsVis ? 'visible' : ''} console-container`} style={{
+                backgroundColor: 'var(--card-bg)',
+                border: '1px solid var(--card-border)',
+                borderRadius: 'var(--radius-lg)',
+                padding: '2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.5rem',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--card-border)', paddingBottom: '1rem' }}>
+                  <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', margin: 0 }}>
+                    // CORE STACK CONSOLE
+                  </h3>
+                  {/* Decorative mini dots */}
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)' }}></span>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)' }}></span>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)' }}></span>
+                  </div>
+                </div>
 
-            {/* Tab controls */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-              {Object.keys(skillsData).map((key) => {
-                const skill = skillsData[key];
-                const isActive = activeTab === key;
-                const activeBg = skill.color.replace(')', ', 0.15)').replace('hsl', 'hsla');
-                const displayName = skill.name.split(' / ')[0].split(' (')[0];
-                return (
-                  <button 
-                    key={key}
-                    onClick={() => setActiveTab(key)}
-                    className={`tab-btn`}
-                    style={{
-                      padding: '0.5rem 0.25rem',
-                      fontSize: 'clamp(0.75rem, 1.8vw, 0.85rem)',
-                      fontWeight: '700',
-                      border: '1px solid var(--card-border)',
-                      borderRadius: 'var(--radius-sm)',
-                      cursor: 'pointer',
-                      background: isActive ? activeBg : 'transparent',
-                      color: isActive ? skill.color : 'var(--text-secondary)',
-                      borderColor: isActive ? skill.color : 'var(--card-border)',
-                      transition: 'var(--transition)'
-                    }}
-                  >
-                    {displayName}
-                  </button>
-                );
-              })}
-            </div>
+                {/* Tab controls */}
+                <div style={{ display: 'grid', gridTemplateColumns: `repeat(${activeSkillKeys.length}, 1fr)`, gap: '0.5rem' }}>
+                  {activeSkillKeys.map((key) => {
+                    const skill = skillsData[key];
+                    const isActive = activeTab === key;
+                    const activeBg = skill.color.replace(')', ', 0.15)').replace('hsl', 'hsla');
+                    const displayName = skill.name.split(' / ')[0].split(' (')[0];
+                    return (
+                      <button 
+                        key={key}
+                        onClick={() => setActiveTab(key)}
+                        className={`tab-btn`}
+                        style={{
+                          padding: '0.5rem 0.25rem',
+                          fontSize: 'clamp(0.75rem, 1.8vw, 0.85rem)',
+                          fontWeight: '700',
+                          border: '1px solid var(--card-border)',
+                          borderRadius: 'var(--radius-sm)',
+                          cursor: 'pointer',
+                          background: isActive ? activeBg : 'transparent',
+                          color: isActive ? skill.color : 'var(--text-secondary)',
+                          borderColor: isActive ? skill.color : 'var(--card-border)',
+                          transition: 'var(--transition)'
+                        }}
+                      >
+                        {displayName}
+                      </button>
+                    );
+                  })}
+                </div>
 
             {/* Active Tech Console Body */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', minHeight: '260px' }}>
@@ -184,7 +188,8 @@ export default function About({ profileData }) {
               </div>
             </div>
 
-          </div>
+              </div>
+            )}
 
         </div>
 

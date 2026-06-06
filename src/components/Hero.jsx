@@ -319,6 +319,181 @@ function MedicineDeskAnimation() {
   );
 }
 
+function TeacherClassroomAnimation() {
+  const [isLightTheme, setIsLightTheme] = useState(false);
+  const [topics, setTopics] = useState([
+    { name: 'HTML5 Semantics', status: '✓ COMPLETED', color: 'hsl(140, 80%, 45%)' },
+    { name: 'CSS Flexbox Layouts', status: '✓ COMPLETED', color: 'hsl(140, 80%, 45%)' },
+    { name: 'Adobe XD wireframes', status: '⟳ ACTIVE LESSON', color: 'hsl(35, 90%, 55%)' },
+    { name: 'Excel Formula workshop', status: '💤 UPCOMING', color: 'hsl(200, 100%, 60%)' }
+  ]);
+  const [attendance, setAttendance] = useState(24);
+  const [timerCount, setTimerCount] = useState(45);
+
+  useEffect(() => {
+    setIsLightTheme(document.documentElement.classList.contains('light-theme'));
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          setIsLightTheme(document.documentElement.classList.contains('light-theme'));
+        }
+      });
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimerCount(prev => (prev <= 5 ? 50 : prev - 1));
+      setAttendance(prev => {
+        const rand = Math.random();
+        if (rand > 0.7 && prev < 25) return prev + 1;
+        if (rand < 0.3 && prev > 22) return prev - 1;
+        return prev;
+      });
+
+      setTopics(prev => {
+        const next = [...prev];
+        const first = next.shift();
+        if (first.name === 'Adobe XD wireframes') {
+          first.status = '✓ COMPLETED';
+          first.color = 'hsl(140, 80%, 45%)';
+        } else if (first.name === 'HTML5 Semantics') {
+          first.status = '✓ COMPLETED';
+          first.color = 'hsl(140, 80%, 45%)';
+        } else if (first.name === 'CSS Flexbox Layouts') {
+          first.status = '✓ COMPLETED';
+          first.color = 'hsl(140, 80%, 45%)';
+        } else if (first.name === 'Excel Formula workshop') {
+          first.status = '⟳ ACTIVE LESSON';
+          first.color = 'hsl(35, 90%, 55%)';
+        }
+        next.push(first);
+
+        const last = next[next.length - 1];
+        if (last.name === 'Excel Formula workshop') {
+          last.status = '💤 UPCOMING';
+          last.color = 'hsl(200, 100%, 60%)';
+        }
+        return next;
+      });
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{
+      background: isLightTheme ? 'rgba(255, 255, 255, 0.7)' : 'hsla(240, 15%, 8%, 0.65)',
+      border: '1px solid var(--card-border)',
+      borderRadius: 'var(--radius-md)',
+      padding: '0.75rem 1rem',
+      fontFamily: 'var(--font-mono)',
+      fontSize: '0.75rem',
+      color: isLightTheme ? '#2d3748' : '#a9b1d6',
+      width: '100%',
+      maxWidth: '380px',
+      marginTop: '1rem',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem',
+      backdropFilter: 'blur(10px)',
+      boxShadow: isLightTheme ? '0 8px 30px rgba(0,0,0,0.06)' : '0 8px 30px rgba(0,0,0,0.2)',
+      textAlign: 'left',
+      transition: 'var(--transition)'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        borderBottom: isLightTheme ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.08)', 
+        paddingBottom: '0.4rem', 
+        marginBottom: '0.2rem' 
+      }}>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#f7768e' }}></span>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#e0af68' }}></span>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#9ece6a' }}></span>
+        </div>
+        <span style={{ fontSize: '0.7rem', color: isLightTheme ? '#7c8ba1' : '#565f89', fontWeight: '600' }}>classroom_session --live</span>
+      </div>
+
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'stretch' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          gap: '0.5rem',
+          borderRight: isLightTheme ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.08)',
+          paddingRight: '1.25rem',
+          width: '95px',
+          flexShrink: 0
+        }}>
+          <div style={{
+            fontSize: '2.2rem',
+            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.15))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '45px',
+            animation: 'float-teacher 3s ease-in-out infinite'
+          }}>
+            🎓
+          </div>
+          
+          <div style={{ textAlign: 'center', width: '100%' }}>
+            <span style={{ fontSize: '0.55rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.15rem', fontWeight: '600' }}>ATTENDANCE</span>
+            <div style={{ height: '4px', width: '100%', background: isLightTheme ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${(attendance / 25) * 100}%`, background: 'hsl(140, 80%, 45%)', transition: 'width 0.4s' }}></div>
+            </div>
+            <span style={{ fontSize: '0.65rem', color: 'hsl(140, 80%, 45%)', fontWeight: 'bold', display: 'block', marginTop: '0.25rem' }}>{attendance}/25 PRES</span>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flexGrow: 1, justifyContent: 'center' }}>
+          {topics.map((item, idx) => (
+            <div key={idx} style={{ display: 'flex', justifycontent: 'space-between', alignItems: 'center', fontSize: '0.7rem' }}>
+              <span style={{ color: 'var(--text-primary)', fontWeight: '500' }}>{item.name}</span>
+              <span style={{ 
+                color: item.color, 
+                fontWeight: '700', 
+                fontSize: '0.65rem',
+                fontFamily: 'var(--font-mono)',
+                backgroundColor: item.color.replace(')', ', 0.1)').replace('hsl', 'hsla'),
+                padding: '0.1rem 0.4rem',
+                borderRadius: '4px'
+              }}>{item.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        borderTop: isLightTheme ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.08)',
+        paddingTop: '0.4rem',
+        marginTop: '0.2rem',
+        fontSize: '0.65rem',
+        color: 'var(--text-muted)'
+      }}>
+        <span>TIME REMAINING: <strong style={{ color: 'var(--text-primary)' }}>{timerCount} MIN</strong></span>
+        <span>ROOM: <strong style={{ color: 'var(--text-primary)' }}>LAB 3B</strong></span>
+      </div>
+
+      <style>{`
+        @keyframes float-teacher {
+          0% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-6px) rotate(-6deg); }
+          100% { transform: translateY(0px) rotate(0deg); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export default function Hero({ profileData }) {
   const profileAvatar = profileData.avatar;
   const [heroRef, heroVisible] = useInView({ threshold: 0.1 });
@@ -424,37 +599,41 @@ export default function Hero({ profileData }) {
             </p>
 
             {/* Core Tech Stack Cards */}
-            <div className={`hero-stack-grid reveal ${vis} stagger-5`} style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '1rem',
-              marginTop: '0.75rem',
-              width: '100%'
-            }}>
-              {Object.values(profileData.about.skillsConsole).map((skill, index) => {
-                const borderTopColor = skill.color || 'var(--primary)';
-                return (
-                  <div key={index} className="hero-stack-card" style={{
-                    background: 'var(--card-bg)',
-                    border: '1px solid var(--card-border)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '1rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.25rem',
-                    transition: 'var(--transition)',
-                    cursor: 'default',
-                    position: 'relative',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0, height: '3px', width: '100%', background: borderTopColor }}></div>
-                    <span style={{ fontSize: '0.8rem', color: borderTopColor, fontWeight: '700', fontFamily: 'var(--font-mono)' }}>{skill.type.toUpperCase()}</span>
-                    <h4 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-primary)' }}>{skill.name}</h4>
-                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>{skill.description.substring(0, 65)}...</p>
-                  </div>
-                );
-              })}
-            </div>
+            {Object.values(profileData.about?.skillsConsole || {}).filter(s => s && s.name && s.description).length > 0 && (
+              <div className={`hero-stack-grid reveal ${vis} stagger-5`} style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${Math.min(3, Object.values(profileData.about?.skillsConsole || {}).filter(s => s && s.name && s.description).length)}, 1fr)`,
+                gap: '1rem',
+                marginTop: '0.75rem',
+                width: '100%'
+              }}>
+                {Object.values(profileData.about.skillsConsole)
+                  .filter(skill => skill && skill.name && skill.description)
+                  .map((skill, index) => {
+                    const borderTopColor = skill.color || 'var(--primary)';
+                    return (
+                      <div key={index} className="hero-stack-card" style={{
+                        background: 'var(--card-bg)',
+                        border: '1px solid var(--card-border)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '1rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.25rem',
+                        transition: 'var(--transition)',
+                        cursor: 'default',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}>
+                        <div style={{ position: 'absolute', top: 0, left: 0, height: '3px', width: '100%', background: borderTopColor }}></div>
+                        <span style={{ fontSize: '0.8rem', color: borderTopColor, fontWeight: '700', fontFamily: 'var(--font-mono)' }}>{skill.type.toUpperCase()}</span>
+                        <h4 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-primary)' }}>{skill.name}</h4>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.4' }}>{skill.description.substring(0, 65)}...</p>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
 
             {/* CTA Buttons */}
             <div className={`reveal ${vis} stagger-6`} style={{
@@ -552,8 +731,10 @@ export default function Hero({ profileData }) {
             </div>
 
             <div className={`reveal ${vis} stagger-5`} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-              {profileData.id === 'nida' ? (
+              {profileData.type === 'medicine' || profileData.id === 'nida' ? (
                 <MedicineDeskAnimation />
+              ) : profileData.type === 'teacher' || profileData.id === 'kimchan' ? (
+                <TeacherClassroomAnimation />
               ) : (
                 <HeroTerminal terminal={profileData.terminal} />
               )}

@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
 import LoginGate from './components/LoginGate';
+import ProfileCV from './components/ProfileCV';
 // import { profilesData as localProfilesData } from './data/profilesData';
 
 function App() {
@@ -317,6 +318,12 @@ function App() {
           </main>
           <Footer profileData={profileData} />
         </>
+      )}
+
+      {profileData && (
+        <div className="print-only-container">
+          <ProfileCV profileData={profileData} />
+        </div>
       )}
     </>
   );

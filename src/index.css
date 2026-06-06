@@ -1070,4 +1070,178 @@ input:checked + .toggle-slider:before {
   100% { transform: rotate(360deg); }
 }
 
+/* ==========================================
+   Print and PDF Export Styles
+   ========================================== */
+.print-only-container {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  :root, :root.light-theme {
+    --bg-color: #ffffff !important;
+    --card-bg: #ffffff !important;
+    --card-border: #e2e8f0 !important;
+    --text-primary: #1a202c !important;
+    --text-secondary: #4a5568 !important;
+    --text-muted: #718096 !important;
+    --primary: #6b46c1 !important;
+    --primary-glow: rgba(107, 70, 193, 0.1) !important;
+    --secondary: #319795 !important;
+    --secondary-glow: rgba(49, 151, 149, 0.1) !important;
+    --bg-gradient-start: #ffffff !important;
+    --bg-gradient-end: #ffffff !important;
+  }
+
+  /* Hide screen-only layouts and interactive elements */
+  header,
+  footer,
+  main,
+  canvas,
+  .header,
+  .footer,
+  .slide-controller,
+  .sdlc-progress-bar,
+  .mode-toggle-container,
+  .theme-toggle-btn,
+  .pulse-dot,
+  .ring-pulse,
+  .btn,
+  button,
+  form,
+  #contact .contact-grid .card {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Override fade-in animation trigger states to make text immediately visible */
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+
+  /* Disable transitions, box-shadows, animations during printing */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Print container configuration */
+  .print-only-container {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+    color: #1a202c !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-only-container * {
+    visibility: visible !important;
+  }
+
+  /* Print Section Pagination styling */
+  .print-only-container section {
+    display: block !important;
+    page-break-inside: avoid !important;
+    page-break-after: always !important;
+    padding: 2.5rem 0 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    background: #ffffff !important;
+    min-height: auto !important;
+  }
+
+  .print-only-container section:first-of-type {
+    padding-top: 0 !important;
+  }
+
+  .print-only-container section:last-of-type {
+    page-break-after: avoid !important;
+    border-bottom: none !important;
+  }
+
+  /* Layout grids override to block */
+  .hero-grid,
+  .contact-grid {
+    display: block !important;
+  }
+
+  .hero-left,
+  .hero-right,
+  .contact-info {
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: left !important;
+  }
+
+  .hero-right {
+    margin-top: 2rem !important;
+  }
+
+  /* Format mock code terminals and desk modules statically for paper */
+  .hero-right > div,
+  .hero-right > div > div {
+    background: #f7f9fa !important;
+    border: 1px solid #cbd5e0 !important;
+    color: #2d3748 !important;
+    box-shadow: none !important;
+    font-size: 0.8rem !important;
+    max-width: 100% !important;
+  }
+
+  /* Timeline lines print override */
+  .timeline::before {
+    background-color: #cbd5e0 !important;
+  }
+
+  .timeline-dot {
+    border-color: #6b46c1 !important;
+    background-color: #ffffff !important;
+  }
+
+  .timeline-content {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .hero-metrics {
+    border-top: 1px solid #e2e8f0 !important;
+  }
+
+  .section-header h2 {
+    color: #1a202c !important;
+    font-size: 2rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .section-subtitle {
+    color: #6b46c1 !important;
+    font-weight: bold !important;
+  }
+
+  .avatar-frame {
+    transform: none !important;
+  }
+}
+
 

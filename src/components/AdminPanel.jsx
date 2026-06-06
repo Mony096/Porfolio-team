@@ -4,6 +4,8 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
   const [authorized, setAuthorized] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('profiles'); // 'profiles' | 'messages' | 'style'
   const [messages, setMessages] = useState([]);
   const [messagesLoading, setMessagesLoading] = useState(false);
@@ -73,6 +75,7 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
 
   const handleAuth = async (code) => {
     setError('');
+    setAuthLoading(true);
     try {
       const response = await fetch('https://nodebackendportfolio.onrender.com/api/messages', {
         headers: { 'x-admin-passcode': code }
@@ -97,6 +100,8 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
       } else {
         setError('Backend is offline. Enter default passcode "admin123" to authorize locally.');
       }
+    } finally {
+      setAuthLoading(false);
     }
   };
 
@@ -265,9 +270,11 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
     e.preventDefault();
     setFormError('');
     setFormSuccess('');
+    setIsSaving(true);
 
     if (!id || !name) {
       setFormError('ID and Name are required.');
+      setIsSaving(false);
       return;
     }
 
@@ -372,7 +379,10 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
       newProfiles[payload.id] = payload;
       setProfiles(newProfiles);
       setFormSuccess('Profile saved successfully (Offline Simulation Mode)');
-      setTimeout(() => setEditingProfile(null), 1500);
+      setTimeout(() => {
+        setIsSaving(false);
+        setEditingProfile(null);
+      }, 1500);
       return;
     }
 
@@ -403,13 +413,16 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
         setProfiles(newProfiles);
 
         setTimeout(() => {
+          setIsSaving(false);
           setEditingProfile(null);
         }, 1500);
       } else {
         setFormError(result.error || 'Server rejected updates.');
+        setIsSaving(false);
       }
     } catch (err) {
       setFormError('Failed to connect to backend server to save.');
+      setIsSaving(false);
     }
   };
 
@@ -461,6 +474,29 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
   const addExp = () => setExperiencesList([...experiencesList, { date: '', role: '', company: '', highlightsText: '', highlightsTags: '', tech: '' }]);
   const removeExp = (index) => setExperiencesList(experiencesList.filter((_, idx) => idx !== index));
 
+  if (!authorized && authLoading && sessionStorage.getItem('admin_passcode')) {
+    return (
+      <section className="section" style={{
+        paddingTop: 'calc(var(--header-height) + 60px)',
+        minHeight: '80vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div className="card" style={{ maxWidth: '400px', width: '100%', padding: '2.5rem 2rem', textAlign: 'center' }}>
+          <div className="loader-spinner-container" style={{ margin: '0 auto 1.5rem' }}>
+            <div className="loader-spinner"></div>
+            <div className="loader-spinner-inner"></div>
+          </div>
+          <h3 style={{ margin: '0 0 0.5rem 0' }}>Verifying Security Token...</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
+            Validating cached credentials. Initial spin-up on Render free hosting may take up to 30 seconds.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   if (!authorized) {
     return (
       <section className="section" style={{
@@ -501,6 +537,7 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
                 placeholder="Passcode (e.g. admin123)"
                 value={passcode}
                 onChange={(e) => setPasscode(e.target.value)}
+                disabled={authLoading}
                 style={{
                   width: '100%',
                   padding: '0.75rem 1rem',
@@ -509,7 +546,8 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
                   background: 'rgba(255, 255, 255, 0.02)',
                   color: 'var(--text-primary)',
                   fontSize: '1rem',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  opacity: authLoading ? 0.6 : 1
                 }}
                 autoFocus
               />
@@ -521,20 +559,35 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
               </p>
             )}
 
-            <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-              Unlock Panel
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} disabled={authLoading}>
+              {authLoading ? (
+                <>
+                  <span className="spinner-inline" style={{
+                    display: 'inline-block',
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                    borderTopColor: '#fff',
+                    borderRadius: '50%',
+                    animation: 'spin-loader-outer 0.8s linear infinite',
+                    verticalAlign: 'middle'
+                  }}></span>
+                  <span>Unlocking Panel...</span>
+                </>
+              ) : 'Unlock Panel'}
             </button>
           </form>
 
-          <button onClick={onClose} style={{
+          <button onClick={onClose} disabled={authLoading} style={{
             background: 'transparent',
             border: 'none',
             color: 'var(--text-secondary)',
             width: '100%',
             textAlign: 'center',
             marginTop: '1.5rem',
-            cursor: 'pointer',
-            fontSize: '0.9rem'
+            cursor: authLoading ? 'not-allowed' : 'pointer',
+            fontSize: '0.9rem',
+            opacity: authLoading ? 0.5 : 1
           }}>
             Cancel
           </button>
@@ -712,7 +765,7 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
                         className="btn btn-secondary"
                         style={{ padding: '0.3rem 0.75rem', fontSize: '0.8rem', height: '30px' }}
                       >
-                        Edit / Patch
+                        Edit
                       </button>
                       <button 
                         onClick={() => handleDeleteProfile(profile.id)}
@@ -1333,10 +1386,24 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
 
               {/* Submit Buttons */}
               <div style={{ display: 'flex', gap: '1rem', borderTop: '1px solid var(--card-border)', paddingTop: '1.5rem' }}>
-                <button type="submit" className="btn btn-primary" style={{ flexGrow: 1 }}>
-                  {editingProfile === 'new' ? 'Create Profile' : 'Save Changes'}
+                <button type="submit" className="btn btn-primary" style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} disabled={isSaving}>
+                  {isSaving ? (
+                    <>
+                      <span className="spinner-inline" style={{
+                        display: 'inline-block',
+                        width: '16px',
+                        height: '16px',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        borderTopColor: '#fff',
+                        borderRadius: '50%',
+                        animation: 'spin-loader-outer 0.8s linear infinite',
+                        verticalAlign: 'middle'
+                      }}></span>
+                      <span>Saving...</span>
+                    </>
+                  ) : (editingProfile === 'new' ? 'Create Profile' : 'Save Changes')}
                 </button>
-                <button type="button" onClick={() => setEditingProfile(null)} className="btn btn-secondary" style={{ flexGrow: 1 }}>
+                <button type="button" onClick={() => setEditingProfile(null)} className="btn btn-secondary" style={{ flexGrow: 1 }} disabled={isSaving}>
                   Cancel
                 </button>
               </div>

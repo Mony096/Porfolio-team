@@ -74,7 +74,7 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
   const handleAuth = async (code) => {
     setError('');
     try {
-      const response = await fetch('http://localhost:5005/api/messages', {
+      const response = await fetch('https://nodebackendportfolio.onrender.com/api/messages', {
         headers: { 'x-admin-passcode': code }
       });
       if (response.status === 401) {
@@ -110,7 +110,7 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
   const fetchMessages = async () => {
     setMessagesLoading(true);
     try {
-      const response = await fetch('http://localhost:5005/api/messages', {
+      const response = await fetch('https://nodebackendportfolio.onrender.com/api/messages', {
         headers: { 'x-admin-passcode': passcode }
       });
       if (response.ok) {
@@ -139,7 +139,7 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:5005/api/messages/${msgId}`, {
+      const response = await fetch(`https://nodebackendportfolio.onrender.com/api/messages/${msgId}`, {
         method: 'DELETE',
         headers: {
           'x-admin-passcode': passcode
@@ -379,8 +379,8 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
     try {
       const isNew = editingProfile === 'new';
       const url = isNew 
-        ? 'http://localhost:5005/api/profiles'
-        : `http://localhost:5005/api/profiles/${id}`;
+        ? 'https://nodebackendportfolio.onrender.com/api/profiles'
+        : `https://nodebackendportfolio.onrender.com/api/profiles/${id}`;
       const method = isNew ? 'POST' : 'PUT';
 
       const response = await fetch(url, {
@@ -427,7 +427,7 @@ export default function AdminPanel({ profiles, setProfiles, onClose }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:5005/api/profiles/${profileId}`, {
+      const response = await fetch(`https://nodebackendportfolio.onrender.com/api/profiles/${profileId}`, {
         method: 'DELETE',
         headers: {
           'x-admin-passcode': passcode

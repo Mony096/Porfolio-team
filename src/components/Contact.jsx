@@ -28,7 +28,7 @@ export default function Contact({ profileData }) {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('http://localhost:5005/api/messages', {
+      const response = await fetch('https://nodebackendportfolio.onrender.com/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -51,7 +51,7 @@ function App() {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const response = await fetch('http://localhost:5005/api/profiles');
+        const response = await fetch('https://nodebackendportfolio.onrender.com/api/profiles');
         if (response.ok) {
           const data = await response.json();
           setProfiles(data);

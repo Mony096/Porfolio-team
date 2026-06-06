@@ -25,7 +25,7 @@ export default function Navbar({
     if (!authState || authState.role !== 'employee') return;
     setMessagesLoading(true);
     try {
-      const response = await fetch(`http://localhost:5005/api/messages/${authState.profileId}`, {
+      const response = await fetch(`https://nodebackendportfolio.onrender.com/api/messages/${authState.profileId}`, {
         headers: { 'x-employee-passcode': authState.passcode }
       });
       if (response.ok) {
@@ -42,7 +42,7 @@ export default function Navbar({
   const handleDeleteMessage = async (msgId) => {
     if (!window.confirm('Are you sure you want to delete this message?')) return;
     try {
-      const response = await fetch(`http://localhost:5005/api/messages/${msgId}`, {
+      const response = await fetch(`https://nodebackendportfolio.onrender.com/api/messages/${msgId}`, {
         method: 'DELETE',
         headers: {
           'x-employee-passcode': authState.passcode

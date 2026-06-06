@@ -157,30 +157,152 @@ export default function Navbar({
                       </a>
                     </li>
                   ))}
+                  
+                  {/* Mobile-only menu action buttons */}
+                  <li className="mobile-menu-actions" style={{
+                    display: 'none',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '1.25rem',
+                    width: '100%',
+                    padding: '0 1rem',
+                    marginTop: '0.5rem',
+                    borderTop: '1px solid var(--card-border)',
+                    paddingTop: '1.5rem'
+                  }}>
+                    {/* Slide Mode Toggle inside mobile menu */}
+                    <div 
+                      className="mode-toggle-container"
+                      onClick={() => {
+                        setIsSlideMode(!isSlideMode);
+                        closeMenu();
+                      }}
+                      style={{ display: 'flex', margin: '0 auto' }}
+                    >
+                      <span className="mode-toggle-label">Slide Mode</span>
+                      <label className="mode-toggle-switch" onClick={(e) => e.stopPropagation()}>
+                        <input 
+                          type="checkbox" 
+                          checked={isSlideMode}
+                          onChange={() => {
+                            setIsSlideMode(!isSlideMode);
+                            closeMenu();
+                          }}
+                        />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+
+                    {/* Export PDF Button inside mobile menu */}
+                    <button
+                      onClick={() => {
+                        closeMenu();
+                        setTimeout(() => window.print(), 350);
+                      }}
+                      className="btn btn-secondary"
+                      style={{
+                        padding: '0.6rem 1.2rem',
+                        fontSize: '0.9rem',
+                        height: '42px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        fontWeight: '600',
+                        borderRadius: '50px',
+                        width: '100%',
+                        border: '1px solid var(--primary)',
+                        color: 'var(--primary)',
+                        background: 'transparent'
+                      }}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      Export PDF
+                    </button>
+
+                    {/* Return to Hub Button inside mobile menu */}
+                    {authState?.role === 'admin' && (
+                      <button
+                        onClick={() => {
+                          setActiveProfile(null);
+                          closeMenu();
+                        }}
+                        className="btn btn-secondary"
+                        style={{
+                          padding: '0.6rem 1.2rem',
+                          fontSize: '0.9rem',
+                          height: '42px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.5rem',
+                          fontWeight: '600',
+                          borderRadius: '50px',
+                          width: '100%'
+                        }}
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="19" y1="12" x2="5" y2="12"></line>
+                          <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        Return to Hub
+                      </button>
+                    )}
+                  </li>
                 </ul>
               </nav>
 
-              {/* Slide Mode Toggle */}
-              <div 
-                className="mode-toggle-container"
-                onClick={() => setIsSlideMode(!isSlideMode)}
-                style={{ display: 'flex' }}
-              >
-                <span className="mode-toggle-label">Slide Mode</span>
-                <label className="mode-toggle-switch" onClick={(e) => e.stopPropagation()}>
-                  <input 
-                    type="checkbox" 
-                    checked={isSlideMode}
-                    onChange={() => setIsSlideMode(!isSlideMode)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
+              {/* Desktop-only action buttons */}
+              <div className="desktop-only-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {/* Slide Mode Toggle */}
+                <div 
+                  className="mode-toggle-container"
+                  onClick={() => setIsSlideMode(!isSlideMode)}
+                  style={{ display: 'flex' }}
+                >
+                  <span className="mode-toggle-label">Slide Mode</span>
+                  <label className="mode-toggle-switch" onClick={(e) => e.stopPropagation()}>
+                    <input 
+                      type="checkbox" 
+                      checked={isSlideMode}
+                      onChange={() => setIsSlideMode(!isSlideMode)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
 
-              {/* Return to Hub Button */}
-              {authState?.role === 'admin' && (
+                {/* Return to Hub Button */}
+                {authState?.role === 'admin' && (
+                  <button
+                    onClick={() => setActiveProfile(null)}
+                    className="btn btn-secondary"
+                    style={{
+                      padding: '0.4rem 0.8rem',
+                      fontSize: '0.8rem',
+                      height: '38px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      fontWeight: '600',
+                      borderRadius: '50px',
+                      flexShrink: 0
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Return to Hub
+                  </button>
+                )}
+
+                {/* Export PDF Button */}
                 <button
-                  onClick={() => setActiveProfile(null)}
+                  onClick={() => window.print()}
                   className="btn btn-secondary"
                   style={{
                     padding: '0.4rem 0.8rem',
@@ -191,44 +313,21 @@ export default function Navbar({
                     gap: '0.35rem',
                     fontWeight: '600',
                     borderRadius: '50px',
-                    flexShrink: 0
+                    flexShrink: 0,
+                    border: '1px solid var(--primary)',
+                    background: 'transparent',
+                    color: 'var(--primary)'
                   }}
+                  title="Export Profile as PDF"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
                   </svg>
-                  Return to Hub
+                  Export PDF
                 </button>
-              )}
-
-              {/* Export PDF Button */}
-              <button
-                onClick={() => window.print()}
-                className="btn btn-secondary"
-                style={{
-                  padding: '0.4rem 0.8rem',
-                  fontSize: '0.8rem',
-                  height: '38px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontWeight: '600',
-                  borderRadius: '50px',
-                  flexShrink: 0,
-                  border: '1px solid var(--primary)',
-                  background: 'transparent',
-                  color: 'var(--primary)'
-                }}
-                title="Export Profile as PDF"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Export PDF
-              </button>
+              </div>
             </>
           )}
 

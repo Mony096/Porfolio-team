@@ -274,8 +274,12 @@ p {
   background: none;
   border: none;
   color: var(--text-primary);
-  font-size: 1.5rem;
   cursor: pointer;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
@@ -288,10 +292,12 @@ p {
     background-color: var(--bg-color);
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 3rem;
+    justify-content: flex-start;
+    padding: 3.5rem 1.5rem;
+    gap: 1.75rem;
     transition: var(--transition);
     border-top: 1px solid var(--card-border);
+    overflow-y: auto;
   }
   
   .nav-links.active {
@@ -299,7 +305,7 @@ p {
   }
   
   .nav-toggle {
-    display: block;
+    display: flex !important;
   }
 }
 
@@ -1241,6 +1247,42 @@ input:checked + .toggle-slider:before {
 
   .avatar-frame {
     transform: none !important;
+  }
+}
+
+/* ==========================================
+   Mobile Responsive Alignment & Layout Fixes
+   ========================================== */
+.logo {
+  white-space: nowrap !important;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 100% !important;
+    padding: 0 1.25rem !important; /* Perfect even spacing on mobile/tablet */
+  }
+
+  .logo {
+    font-size: 1.25rem !important;
+  }
+
+  .desktop-only-actions {
+    display: none !important;
+  }
+
+  .mobile-menu-actions {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem !important; /* Slightly tighter margins for very narrow mobile screens */
+  }
+
+  .logo {
+    font-size: 1.15rem !important;
   }
 }
 
